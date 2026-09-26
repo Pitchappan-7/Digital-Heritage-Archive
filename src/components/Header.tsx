@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ArchiveLogo } from './ArchiveLogo';
 import { Icon } from './Icon';
+import { useLanguage, Language } from '../i18n';
 
 interface HeaderProps {
   currentTab: string;
@@ -17,19 +18,47 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenChat,
   onOpenSearch,
 }) => {
+  const { setLanguage, t } = useLanguage();
   const [langOpen, setLangOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [selectedLang, setSelectedLang] = useState('EN');
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setLangOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, []);
 
   const navItems = [
-    { id: 'home', label: 'Home' },
-    { id: 'explore', label: 'Explore' },
-    { id: 'ask-the-archive', label: 'Ask the Archive' },
-    { id: 'reader', label: 'Folio Reader' },
-    { id: 'collections', label: 'Collections' },
-    { id: 'timeline', label: 'Timeline' },
-    { id: 'heritage-map', label: 'Heritage Map' },
+    { id: 'home', label: t('home') },
+    { id: 'explore', label: t('explore') },
+    { id: 'ask-the-archive', label: t('askArchive') },
+    { id: 'reader', label: t('folioReader') },
+    { id: 'collections', label: t('collections') },
+    { id: 'timeline', label: t('timeline') },
+    { id: 'heritage-map', label: t('heritageMap') },
   ];
+
+  const languagesList: { code: Language; label: string }[] = [
+    { code: 'en', label: 'English (EN)' },
+    { code: 'hi', label: 'हिन्दी (HI)' },
+    { code: 'mr', label: 'मराठी (MR)' },
+    { code: 'ta', label: 'தமிழ் (TA)' },
+  ];
+
+  const handleSelectLanguage = (code: Language) => {
+    setLanguage(code);
+    setLangOpen(false);
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40 bg-[#fff8f3]/95 backdrop-blur-md border-b border-[#ede7e2] shadow-[0_1px_8px_rgba(29,27,24,0.06)] box-border max-w-full">
@@ -71,35 +100,46 @@ export const Header: React.FC<HeaderProps> = ({
             className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-lg bg-[#f3ede7] text-[#554242] hover:bg-[#ede7e2] hover:text-[#1d1b18] transition-colors cursor-pointer"
           >
             <Icon name="search" size={18} />
-            <span className="text-xs font-sans font-medium hidden md:inline">Search</span>
+            <span className="text-xs font-sans font-medium hidden md:inline">{t('search')}</span>
             <kbd className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-[#e7e1dc] text-[#805610] hidden sm:inline-block">
               ⌘K
             </kbd>
           </button>
 
           {/* Multilingual Selector */}
-          <div className="relative">
+          <div className="relative" ref={dropdownRef}>
             <button
               type="button"
               onClick={() => setLangOpen(!langOpen)}
+              aria-expanded={langOpen}
+              aria-haspopup="true"
+              aria-label="Select Language"
               className="flex items-center gap-1 px-1.5 sm:px-2 py-1.5 text-[#554242] hover:text-[#1d1b18] text-xs font-sans cursor-pointer rounded hover:bg-[#f3ede7]"
             >
               <Icon name="translate" size={18} />
-              <span className="uppercase font-semibold text-xs">{selectedLang}</span>
+              <span className="uppercase font-semibold text-xs">{t('selectedLangCode')}</span>
               <Icon name="arrow_drop_down" size={16} />
             </button>
             {langOpen && (
-              <div className="absolute right-0 mt-1 w-32 bg-[#ffffff] rounded-lg shadow-xl border border-[#ede7e2] py-1 z-50">
-                {['English (EN)', 'हिन्दी (HI)', 'मराठी (MR)', 'தமிழ் (TA)'].map((l) => (
+              <div
+                role="menu"
+                className="absolute right-0 mt-1 w-36 bg-[#ffffff] rounded-lg shadow-xl border border-[#ede7e2] py-1 z-50"
+              >
+                {languagesList.map((l) => (
                   <button
-                    key={l}
-                    onClick={() => {
-                      setSelectedLang(l.slice(-3, -1));
-                      setLangOpen(false);
+                    key={l.code}
+                    type="button"
+                    role="menuitem"
+                    onClick={() => handleSelectLanguage(l.code)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleSelectLanguage(l.code);
+                      }
                     }}
-                    className="w-full text-left px-3 py-1.5 text-xs hover:bg-[#f3ede7] text-[#1d1b18] transition-colors"
+                    className="w-full text-left px-3 py-1.5 text-xs hover:bg-[#f3ede7] text-[#1d1b18] transition-colors cursor-pointer font-sans"
                   >
-                    {l}
+                    {l.label}
                   </button>
                 ))}
               </div>
@@ -114,7 +154,7 @@ export const Header: React.FC<HeaderProps> = ({
             title="Generate high-resolution archival folio images using gemini-3-pro-image-preview"
           >
             <Icon name="image" size={18} className="text-[#805610]" />
-            <span className="hidden xl:inline">Image Studio</span>
+            <span className="hidden xl:inline">{t('imageStudio')}</span>
             <span className="text-[9px] bg-[#805610] text-white px-1.5 py-0.2 rounded font-mono">
               4K
             </span>
@@ -128,7 +168,7 @@ export const Header: React.FC<HeaderProps> = ({
             title="Open Gemini Multi-Turn Archival Chatbot"
           >
             <Icon name="smart_toy" size={18} />
-            <span className="hidden sm:inline">AI Chatbot</span>
+            <span className="hidden sm:inline">{t('aiChatbot')}</span>
           </button>
 
           {/* Explore Archive Primary CTA */}
@@ -138,7 +178,7 @@ export const Header: React.FC<HeaderProps> = ({
             className="hidden 2xl:flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#721d28] text-white font-sans text-xs uppercase tracking-wider hover:bg-[#540414] transition-all shadow-[0_2px_8px_rgba(114,29,40,0.25)] cursor-pointer"
           >
             <Icon name="auto_stories" size={18} />
-            <span>Explore Archive</span>
+            <span>{t('exploreArchive')}</span>
           </button>
 
           {/* Researcher Profile Avatar */}

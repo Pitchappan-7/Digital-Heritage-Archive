@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { CatalogRecord } from '../types';
 import { Icon } from './Icon';
+import { useLanguage } from '../i18n';
 
 interface ExploreViewProps {
   records: CatalogRecord[];
@@ -17,6 +18,7 @@ export const ExploreView: React.FC<ExploreViewProps> = ({
   onOpenChat,
   onOpenImageGen,
 }) => {
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState(
     "Ambedkar AND (Constitution OR 'Labour Rights') NOT provisional"
   );
@@ -56,10 +58,10 @@ export const ExploreView: React.FC<ExploreViewProps> = ({
         <div className="flex flex-wrap items-center justify-between gap-2 max-w-7xl mx-auto w-full">
           <div className="flex items-center gap-1.5 font-mono text-xs tracking-wider uppercase text-[#554242]">
             <button onClick={() => onNavigate('home')} className="hover:text-[#540414] cursor-pointer">
-              Home
+              {t('home')}
             </button>
             <span className="text-[#805610] opacity-70">/</span>
-            <span className="text-[#540414] font-semibold">Explore</span>
+            <span className="text-[#540414] font-semibold">{t('explore')}</span>
             <span className="text-[#805610] opacity-70">/</span>
             <span className="text-[#1d1b18]">Catalog Discovery</span>
           </div>
@@ -84,12 +86,10 @@ export const ExploreView: React.FC<ExploreViewProps> = ({
                 <span>Curatorial Scholarly Repository</span>
               </div>
               <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-[#540414] font-semibold tracking-tight">
-                Explore the Archive Catalog
+                {t('exploreTitle')}
               </h1>
               <p className="font-sans text-sm sm:text-base text-[#554242] max-w-3xl leading-relaxed">
-                Search, filter, and access 12,450+ digitized manuscripts, official correspondence,
-                historical photographs, sound recordings, and verified source records preserved under
-                scholarly open access charters.
+                {t('exploreSubtitle')}
               </p>
             </div>
 

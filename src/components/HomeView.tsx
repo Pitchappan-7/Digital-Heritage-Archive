@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { CatalogRecord } from '../types';
 import { Icon } from './Icon';
+import { useLanguage } from '../i18n';
 
 interface HomeViewProps {
   onNavigate: (tab: string) => void;
@@ -19,6 +20,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
   onSearch,
   records,
 }) => {
+  const { t } = useLanguage();
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [audioPlaying, setAudioPlaying] = useState(false);
@@ -26,11 +28,11 @@ export const HomeView: React.FC<HomeViewProps> = ({
   const [aiAssistantResponse, setAiAssistantResponse] = useState<string | null>(null);
 
   const categories = [
-    { id: 'all', label: 'All Records', icon: 'menu_book' },
-    { id: 'manuscripts', label: 'Manuscripts (4.1k)' },
-    { id: 'speeches', label: 'Speeches & Debates' },
-    { id: 'photographs', label: 'Photographs (3.2k)' },
-    { id: 'audio', label: 'Audio Folios' },
+    { id: 'all', label: t('allRecords'), icon: 'menu_book' },
+    { id: 'manuscripts', label: t('manuscriptsCat') },
+    { id: 'speeches', label: t('speechesCat') },
+    { id: 'photographs', label: t('photographsCat') },
+    { id: 'audio', label: t('audioCat') },
   ];
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -65,20 +67,20 @@ export const HomeView: React.FC<HomeViewProps> = ({
       >
         <div className="flex items-center gap-2 flex-wrap text-sm">
           <span className="flex h-2 w-2 rounded-full bg-[#002e18]"></span>
-          <span className="font-semibold text-[#1d1b18] text-xs">Archive Verified</span>
+          <span className="font-semibold text-[#1d1b18] text-xs">{t('archiveVerified')}</span>
           <span className="text-[#554242]/40">·</span>
-          <span className="text-[#554242] text-xs">12,450+ Records</span>
+          <span className="text-[#554242] text-xs">{t('recordsCount')}</span>
           <span className="text-[#554242]/40">·</span>
-          <span className="text-[#554242] text-xs">24 Collections</span>
+          <span className="text-[#554242] text-xs">{t('collectionsCount')}</span>
           <span className="text-[#554242]/40">·</span>
-          <span className="text-[#805610] text-xs font-medium">Updated Sep 2026</span>
+          <span className="text-[#805610] text-xs font-medium">{t('updatedDate')}</span>
         </div>
         <div className="flex items-center">
           <button
             onClick={() => onNavigate('timeline')}
             className="text-[#805610] hover:text-[#540414] transition-colors text-xs font-semibold flex items-center gap-1 cursor-pointer"
           >
-            <span>Preservation Standards &amp; Provenance</span>
+            <span>{t('preservationStandards')}</span>
             <Icon name="arrow_forward" size={14} />
           </button>
         </div>
@@ -93,7 +95,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
           {/* Eyebrow Badge */}
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#f3ede7] text-[#540414] font-mono text-xs uppercase tracking-widest mb-6 shadow-xs border border-[#ede7e2]">
             <Icon name="verified" size={16} className="text-[#805610]" />
-            <span>Digital Heritage Archive • National Cultural Repository</span>
+            <span>{t('nationalRepository')}</span>
           </div>
 
           {/* Grand Editorial Headline */}
@@ -101,15 +103,14 @@ export const HomeView: React.FC<HomeViewProps> = ({
             className="font-serif text-3xl sm:text-5xl lg:text-6xl text-[#540414] max-w-5xl leading-tight mb-4 tracking-tight font-semibold"
             style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
           >
-            Preserve the Past.{' '}
-            <span className="italic font-normal text-[#805610]">Discover</span> the Stories.
-            Uncover the Legacy.
+            {t('heroTitlePreserve')}{' '}
+            <span className="italic font-normal text-[#805610]">{t('heroTitleDiscover')}</span>{' '}
+            {t('heroTitleStories')} {t('heroTitleUncover')}
           </h1>
 
           {/* Supporting Editorial Subtitle */}
           <p className="font-sans text-base sm:text-lg text-[#554242] max-w-3xl mb-8 leading-relaxed">
-            Explore digitized manuscripts, rare historical records, speeches, photographs,
-            correspondence, and audio archives through an intelligent source-verified knowledge system.
+            {t('heroSubtitle')}
           </p>
 
           {/* Omni-Search Master Console */}
@@ -143,7 +144,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search documents, people, places, events, keywords (e.g., 'Poona Pact 1932' or 'Columbia Thesis')..."
+                  placeholder={t('searchPlaceholder')}
                   className="w-full bg-transparent font-sans text-sm text-[#1d1b18] placeholder:text-[#554242]/70 focus:outline-none"
                 />
                 <div className="hidden md:flex items-center gap-1 font-mono text-[11px] text-[#554242] bg-[#e7e1dc] px-2 py-0.5 rounded ml-2">
@@ -154,14 +155,14 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 type="submit"
                 className="px-6 py-3 rounded-xl bg-[#540414] text-white font-sans text-xs uppercase tracking-wider font-semibold hover:bg-[#721d28] transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer"
               >
-                <span>Search Archive</span>
+                <span>{t('searchArchiveBtn')}</span>
                 <Icon name="arrow_forward" size={18} />
               </button>
             </form>
 
             {/* Quick Syntax Suggestions */}
             <div className="flex items-center gap-2 pt-3 px-1 font-mono text-xs text-[#554242]/80 flex-wrap">
-              <span className="text-[#805610] uppercase font-semibold">Scholarly Directives:</span>
+              <span className="text-[#805610] uppercase font-semibold">{t('scholarlyDirectives')}</span>
               <button
                 type="button"
                 onClick={() => handleQuickDirective('Ambedkar Columbia University 1916')}
