@@ -1,0 +1,6 @@
+{
+  "name": "Digital Heritage Archive",
+  "description": "National repository safeguarding endangered cultural heritage, rare manuscripts, speeches, and primary documents with AI research synthesis and folio image generation.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
